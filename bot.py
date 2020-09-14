@@ -56,14 +56,18 @@ def run_bot(reddit):
 
     subreddit = reddit.subreddit("test")
     for comment in subreddit.comments(limit=25):
-        if (word in comment.body and comment.id not in comments_replied_to):
+        # Check if the comment contains the word, if the comment has already
+        # been replied to, and if it was a reply left by the bot previously.
+        if (word in comment.body and
+            comment.id not in comments_replied_to and
+                comment.author != config.username):
 
             print("Comment found with id %s" % comment.id)
 
             reply_message = build_reply(word, main_attr, syllables, defs)
-
             comment.reply(reply_message)
 
+            # Save the comment so it won't be replied to later.
             save_comment(comment, comments_replied_to)
 
             print("Replied to comment with id %s" % comment.id)
