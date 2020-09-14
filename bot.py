@@ -20,12 +20,14 @@ REPLY_DEFINITIONS = "%s\n\n"
 REPLY_LINK = "Read more at [merriam-webster.com](https://www.merriam-webster.com/word-of-the-day)."
 
 
-# This function gets the reddit instance and then runs the bot.
+# This function gets the reddit instance, and then alternates between
+# running the bot and sleeping for one minute.
 def main():
     reddit = bot_login()
 
     while True:
         run_bot(reddit)
+        time.sleep(60)
 
 
 # This function logs into reddit using credentials from config.py,
@@ -72,9 +74,6 @@ def run_bot(reddit):
             save_comment(comment, comments_replied_to)
 
             print("Replied to comment with id %s" % comment.id)
-
-    # Sleep after each iteration to avoid spamming.
-    time.sleep(10)
 
 
 # This function scrapes merriam-webster.com to retrieve the word of the day.
