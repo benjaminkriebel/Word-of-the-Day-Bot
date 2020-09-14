@@ -45,16 +45,17 @@ def bot_login():
     return reddit
 
 
-# This function gets the word of the day and then grabs comments 20
-# at a time from the subreddit r/all and checks to see if they contain the
-# word of the day. If it does, the bot replies to the comment and saves
-# its id. After each iteration, the bot sleeps for 10 seconds.
+# This function gets the word of the day and then monitors comments coming
+# from r/all. If the comment meets certain conditions, the bot replies to
+# the comment.
 def run_bot(reddit):
     [word, main_attr, syllables, defs] = get_word()
 
     comments_replied_to = get_saved_comments()
 
     subreddit = reddit.subreddit("test")
+
+    # Grab comments 25 at a time.
     for comment in subreddit.comments(limit=25):
         # Check if the comment contains the word, if the comment has already
         # been replied to, and if it was a reply left by the bot previously.
@@ -72,6 +73,7 @@ def run_bot(reddit):
 
             print("Replied to comment with id %s" % comment.id)
 
+    # Sleep after each iteration to avoid spamming.
     time.sleep(10)
 
 
