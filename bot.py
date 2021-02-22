@@ -1,7 +1,5 @@
 # Word of the Day Bot
-# A simple Reddit bot that replies to comments using a word of the day.
-#
-# Benjamin Kriebel (https://github.com/benjaminkriebel)
+# A Reddit bot that replies to comments using a word of the day.
 
 import praw
 import config
@@ -20,9 +18,10 @@ REPLY_DEFINITIONS = "%s\n\n"
 REPLY_LINK = "Read more at [merriam-webster.com](https://www.merriam-webster.com/word-of-the-day)."
 
 
-# This function gets the reddit instance, and then alternates between
-# running the bot and sleeping for one minute.
-def main():
+def run_bot():
+    """
+    Main driver function.
+    """
     reddit = bot_login()
 
     while True:
@@ -30,9 +29,11 @@ def main():
         time.sleep(60)
 
 
-# This function logs into reddit using credentials from config.py,
-# and then returns the newly created reddit instance.
 def bot_login():
+    """
+    Log into Reddit and return the newly created Reddit instance.
+    """
+    
     print("Logging in...")
 
     reddit = praw.Reddit(
@@ -47,15 +48,16 @@ def bot_login():
     return reddit
 
 
-# This function gets the word of the day and then monitors comments coming
-# from r/all. If the comment meets certain conditions, the bot replies to
-# the comment.
 def run_bot(reddit):
+    """
+    Get the word of the day and then monitor comments coming from r/all.
+    """
+    
     [word, main_attr, syllables, defs] = get_word()
 
     comments_replied_to = get_saved_comments()
 
-    subreddit = reddit.subreddit("test")
+    subreddit = reddit.subreddit("all")
 
     # Grab comments 25 at a time.
     for comment in subreddit.comments(limit=25):
@@ -63,7 +65,7 @@ def run_bot(reddit):
         # been replied to, and if it was a reply left by the bot previously.
         if (word in comment.body and
             comment.id not in comments_replied_to and
-                comment.author != config.username):
+            comment.author != config.username):
 
             print("Comment found with id %s" % comment.id)
 
@@ -76,10 +78,11 @@ def run_bot(reddit):
             print("Replied to comment with id %s" % comment.id)
 
 
-# This function scrapes merriam-webster.com to retrieve the word of the day.
-# It collects the word, its main attribute, its syllables, and its definitions,
-# which it then returns as a list.
 def get_word():
+    """
+    Get the word of the day and other information from merriam-webster.com.
+    """
+    
     page = requests.get(URL)
     soup = bs4.BeautifulSoup(page.content, "html.parser")
 
@@ -102,9 +105,11 @@ def get_word():
     return [word, main_attr, syllables, defs]
 
 
-# This function retrieves the list of comment ids from comments.txt
-# and returns them as a list.
 def get_saved_comments():
+    """
+    Retrieve the list of saved comments.
+    """
+    
     if not os.path.isfile("comments.txt"):
         id_list = []
     else:
@@ -115,16 +120,21 @@ def get_saved_comments():
     return id_list
 
 
-# This function saves a comment to the list of comments replied to,
-# and writes its id to comments.txt.
-def save_comments(comment, comments_replied_to):
+def save_comment(comment, comments_replied_to):
+    """
+    Save a comment to a list of comments previously replied to.
+    """
+    
     comments_replied_to.append(comment.id)
     with open("comments.txt", "a") as f:
         f.write(comment.id + "\n")
 
 
-# This function constructs the reply message that will be sent.
 def build_reply(word, main_attr, syllables, defs):
+    """
+    Construct the reply message that the bot will send.
+    """
+    
     reply_message = []
     reply_message.append(REPLY_HEADER)
     reply_message.append(BLANK_LINE)
@@ -136,6 +146,5 @@ def build_reply(word, main_attr, syllables, defs):
 
     return ("".join(reply_message))
 
-
-# Call main to initiate the bot.
-main()
+if __name___ == "__main__":
+    run_bot()
