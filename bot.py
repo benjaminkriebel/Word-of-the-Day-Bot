@@ -146,5 +146,6 @@ def build_reply(word, main_attr, syllables, defs):
 
     return ("".join(reply_message))
 
+
 if __name___ == "__main__":
     run_bot()
