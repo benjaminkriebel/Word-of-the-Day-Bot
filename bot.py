@@ -31,7 +31,7 @@ def run_bot():
 
 def bot_login():
     """
-    Log into Reddit and return the newly created Reddit instance.
+    Login to Reddit and return the newly created Reddit instance.
     """
     
     print("Logging in...")
